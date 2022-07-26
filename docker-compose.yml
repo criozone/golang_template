@@ -1,0 +1,43 @@
+version: "3.6"
+networks:
+  default:
+    external:
+      name: hhs-global
+services:
+  wss-go:
+    build:
+      context: ./
+      dockerfile: ./docker/go/Dockerfile
+    working_dir: /go/src/app
+    volumes:
+      - .:/app
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+    environment:
+      - APP_WSS_ADDR=
+      - APP_WSS_PORT=
+      - APP_SENTRY_DSN=
+      - APP_REDIS_HOST=wss-redis
+      - APP_REDIS_PORT=6379
+      - APP_REDIS_PREFIX=
+      - SERVICE_NAME=WSS_2.0
+      - DEVELOPMENT=false
+      - VIRTUAL_HOST=
+      - REQUEST_ID_HEADER_NAME=
+      - MODULE_PATH=git.slygods.com/evoplay/wss-go
+      - HOST_UID=${HOST_UID}
+      - HOST_GID=${HOST_GID}
+
+  wss-redis:
+    image: registry.evoplay.games/redis-base:6.0.8
+
+  wss-nginx:
+    build:
+      context: ./
+      dockerfile: ./docker/nginx/Dockerfile
+      args:
+        - APP_WSS_PORT=8080
+    environment:
+      - VIRTUAL_HOST=
+    depends_on:
+      - wss-go

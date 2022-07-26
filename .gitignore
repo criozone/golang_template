@@ -1,0 +1,14 @@
+.idea
+
+.env
+docker-compose.override.yml
+
+docker/tls/*
+!docker/tls/.gitkeep
+
+local/*
+!local/.gitkeep
+
+bin
+logs/*
+!logs/.gitkeep
